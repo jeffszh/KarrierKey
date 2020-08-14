@@ -28,4 +28,11 @@ public interface MyApi extends StdCallLibrary, WinUser, WinNT {
 
 	short GetKeyState(int vKey);
 
+	void keybd_event(
+			Byte bVk,
+			Byte bScan,
+			int dwFlags,
+			int dwExtraInfo
+	);
+
 }
