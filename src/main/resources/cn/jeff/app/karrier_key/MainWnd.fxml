@@ -11,7 +11,8 @@
 	<center>
 		<VBox alignment="CENTER" BorderPane.alignment="CENTER">
 			<HBox alignment="CENTER">
-				<Button mnemonicParsing="false" onAction="#btn01Click" text="Button"/>
+				<Button mnemonicParsing="false" onAction="#btn01Click" text="btn01"/>
+				<Button mnemonicParsing="false" onAction="#btn02Click" text="btn02"/>
 			</HBox>
 		</VBox>
 	</center>

@@ -8,4 +8,8 @@ public class MainWndJ {
 		k.btn01Click();
 	}
 
+	public void btn02Click() {
+		k.btn02Click();
+	}
+
 }
