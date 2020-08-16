@@ -24,4 +24,5 @@ hs_err_pid*
 
 .idea/
 KarrierKey.iml
+karrier-key.iml
 /target
