@@ -8,6 +8,7 @@ import com.sun.jna.platform.win32.WinDef
 import com.sun.jna.platform.win32.WinUser
 import javafx.fxml.FXMLLoader
 import javafx.scene.layout.BorderPane
+import javafx.scene.paint.Color
 import tornadofx.*
 import java.awt.event.KeyEvent
 
@@ -68,11 +69,15 @@ class MainWnd : View("鋼鉄の咆哮3 飛機自動出擊鍵盤助手") {
 
 	private fun onTimeTick() {
 		val scrollLockState = myApi.GetKeyState(KeyEvent.VK_SCROLL_LOCK)
-		if (scrollLockState != 0.toShort()) {
+		if (scrollLockState == 0.toShort()) {
+			j.circle01.fill = Color.GRAY
+		} else {
+			j.circle01.fill = Color.GOLD
 			performKeyPress(KeyEvent.VK_SUBTRACT.toByte(), 0x2D, true)
 		}
 	}
 
+	@Suppress("SameParameterValue")
 	private fun performKeyPress(vk: Byte, sc: Byte, ext: Boolean) {
 		val extFlag = if (ext) WinUser.KEYBDINPUT.KEYEVENTF_EXTENDEDKEY else 0
 
