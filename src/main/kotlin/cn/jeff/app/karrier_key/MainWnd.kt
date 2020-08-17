@@ -6,10 +6,12 @@ import com.sun.jna.platform.KeyboardUtils
 import com.sun.jna.platform.win32.User32
 import com.sun.jna.platform.win32.WinDef
 import com.sun.jna.platform.win32.WinUser
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.fxml.FXMLLoader
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
 import tornadofx.*
+import java.awt.Toolkit
 import java.awt.event.KeyEvent
 
 class MainWnd : View("鋼鉄の咆哮3 飛機自動出擊鍵盤助手") {
@@ -20,6 +22,8 @@ class MainWnd : View("鋼鉄の咆哮3 飛機自動出擊鍵盤助手") {
 	private val myApi = MyApi.INSTANCE
 	//	private val kernel = Kernel32.INSTANCE
 	private val hWnd: WinDef.HWND by lazy(this::findSelfWindowHandle)
+	private val stickCount = SimpleIntegerProperty(0)
+	private val maxStickCount = 3
 
 	init {
 		val loader = FXMLLoader()
@@ -31,6 +35,14 @@ class MainWnd : View("鋼鉄の咆哮3 飛機自動出擊鍵盤助手") {
 
 //		j.label01.text = "使用方法：\n当ScrollLock灯亮，每秒自动按小键盘减号键；\n当ScrollLock灯灭，停止。"
 		println(j.label01.text)
+
+		j.circle01.fillProperty().bind(stickCount.objectBinding {
+			if (it == maxStickCount) {
+				Color.GOLD
+			} else {
+				Color.GRAY
+			}
+		})
 
 		primaryStage.setOnCloseRequest {
 			println("窗口关闭：$it")
@@ -68,11 +80,31 @@ class MainWnd : View("鋼鉄の咆哮3 飛機自動出擊鍵盤助手") {
 	}
 
 	private fun onTimeTick() {
-		val scrollLockState = myApi.GetKeyState(KeyEvent.VK_SCROLL_LOCK)
-		if (scrollLockState == 0.toShort()) {
-			j.circle01.fill = Color.GRAY
-		} else {
-			j.circle01.fill = Color.GOLD
+		val subtractKeyState = myApi.GetAsyncKeyState(KeyEvent.VK_SUBTRACT)
+		val addKeyState = myApi.GetAsyncKeyState(KeyEvent.VK_ADD)
+		println((subtractKeyState.toInt() and 0xFFFF).toString(16))
+		when {
+			// 若按下过加号键，取消自动连发。
+			addKeyState != 0.toShort() -> {
+				stickCount.value = 0
+			}
+			// 若长按没达到时间就松开，取消自动连发。
+			(subtractKeyState.toInt() and 0x8000) == 0 -> {
+				if (stickCount.value < maxStickCount) {
+					stickCount.value = 0
+				}
+			}
+			// 若长按达到时间，激活自动连发。
+			else -> {
+				if (stickCount.value < maxStickCount) {
+					stickCount.value++
+					if (stickCount.value == maxStickCount) {
+						Toolkit.getDefaultToolkit().beep()
+					}
+				}
+			}
+		}
+		if (stickCount.value >= maxStickCount) {
 			performKeyPress(KeyEvent.VK_SUBTRACT.toByte(), 0x2D, true)
 		}
 	}
