@@ -12,7 +12,7 @@
 			fx:controller="cn.jeff.app.karrier_key.MainWndJ">
 	<center>
 		<VBox alignment="CENTER" spacing="24.0" BorderPane.alignment="CENTER">
-			<Label fx:id="label01" text="使用方法：&#10;当ScrollLock灯亮，每秒自动按小键盘减号键；&#10;当ScrollLock灯灭，停止。"/>
+			<Label fx:id="label01" text="使用方法：&#10;长按小键盘减号键，之后每秒会自动按；&#10;按小键盘加号键，停止。"/>
 			<HBox alignment="CENTER" spacing="12.0">
 				<Circle fx:id="circle01" fill="DODGERBLUE" radius="25.0" stroke="BLACK" strokeType="INSIDE"/>
 				<Button mnemonicParsing="false" onAction="#btn01Click" text="btn01"/>

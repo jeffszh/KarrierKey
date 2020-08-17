@@ -9,9 +9,10 @@ import com.sun.jna.platform.win32.WinUser
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.fxml.FXMLLoader
 import javafx.scene.layout.BorderPane
+import javafx.scene.media.Media
+import javafx.scene.media.MediaPlayer
 import javafx.scene.paint.Color
 import tornadofx.*
-import java.awt.Toolkit
 import java.awt.event.KeyEvent
 
 class MainWnd : View("鋼鉄の咆哮3 飛機自動出擊鍵盤助手") {
@@ -24,6 +25,10 @@ class MainWnd : View("鋼鉄の咆哮3 飛機自動出擊鍵盤助手") {
 	private val hWnd: WinDef.HWND by lazy(this::findSelfWindowHandle)
 	private val stickCount = SimpleIntegerProperty(0)
 	private val maxStickCount = 3
+	private val audio01 = Media(javaClass.getResource("/wav/On.wav").toString())
+	private val audio02 = Media(javaClass.getResource("/wav/Off.wav").toString())
+	private val player01 = MediaPlayer(audio01)
+	private val player02 = MediaPlayer(audio02)
 
 	init {
 		val loader = FXMLLoader()
@@ -33,7 +38,6 @@ class MainWnd : View("鋼鉄の咆哮3 飛機自動出擊鍵盤助手") {
 		j = loader.getController()
 		j.k = this
 
-//		j.label01.text = "使用方法：\n当ScrollLock灯亮，每秒自动按小键盘减号键；\n当ScrollLock灯灭，停止。"
 		println(j.label01.text)
 
 		j.circle01.fillProperty().bind(stickCount.objectBinding {
@@ -86,6 +90,10 @@ class MainWnd : View("鋼鉄の咆哮3 飛機自動出擊鍵盤助手") {
 		when {
 			// 若按下过加号键，取消自动连发。
 			addKeyState != 0.toShort() -> {
+				if (stickCount.value == maxStickCount) {
+					player02.stop()
+					player02.play()
+				}
 				stickCount.value = 0
 			}
 			// 若长按没达到时间就松开，取消自动连发。
@@ -99,7 +107,9 @@ class MainWnd : View("鋼鉄の咆哮3 飛機自動出擊鍵盤助手") {
 				if (stickCount.value < maxStickCount) {
 					stickCount.value++
 					if (stickCount.value == maxStickCount) {
-						Toolkit.getDefaultToolkit().beep()
+						player01.stop()
+						player01.play()
+//						Toolkit.getDefaultToolkit().beep()
 					}
 				}
 			}
